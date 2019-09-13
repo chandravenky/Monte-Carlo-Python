@@ -1,0 +1,20 @@
+import pandas as pd
+import numpy as np
+size=10000
+states=['Good','Bad']
+
+probabilities=[0.6,0.4]
+apartment={'Good': 50, 'Bad':30}
+office={'Good': 100, 'Bad':-40}
+warehouse={'Good': 30, 'Bad':10}
+state_realizations= np.random.choice(states, size=size, p=probabilities)
+
+data = pd.DataFrame({'state':state_realizations})
+data.head()
+
+data['apartment']= [apartment[i] for i  in data.state]
+data['office']= [office[i] for i  in data.state]
+data['warehouse']= [warehouse[i] for i  in data.state]
+data['decide after observe']= [max(data.iloc[i][1:]) for i in data.index]
+emv=data.agg('mean')
+evpi = emv['decide after observe'] - max(emv['apartment'], emv['office'], emv['warehouse'])

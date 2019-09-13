@@ -1,0 +1,20 @@
+import numpy as np
+import pandas as pd
+size=10000
+
+states = ['State 1', 'State 2', 'State 3', 'State 4']
+probabilities = [0.2,0.1,0.3,0.4]
+
+alone = {'State 1':4, 'State 2': 13,'State 3': -5, 'State 4': 7}
+joint = {'State 1':6, 'State 2': 9,'State 3': -1, 'State 4': 3}
+do_nothing = {'State 1':0, 'State 2': 0,'State 3': 0, 'State 4': 0}
+state_realizations = np.random.choice(states, size=size, p=probabilities)
+
+data = pd.DataFrame({'state': state_realizations})
+data['alone']= [alone[i] for i in data['state']]
+data['joint']= [joint[i] for i in data['state']]
+data['do_nothing']= [do_nothing[i] for i in data['state']]
+data['decide after observing'] = [max(data.iloc[i][1:]) for i in data.index]
+
+emv=data.agg('mean')
+evpi=emv['decide after observing']-max(emv['alone'], emv['joint'])
